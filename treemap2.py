@@ -11,6 +11,18 @@ import os
 import pandas as pd
 from selenium.webdriver.common.by import By
 
+"""
+    Created by Rodrigo Maruyama in January 14th, 2021.
+    This scripts creates a Treemap from the Brazil Stock market divided by its
+    markets: Consumo, Industria, Basicos, Energia, Financeiro, Imobiliario e
+    Utilidade Publica.
+    The source is https://br.investing.com website.
+"""
+
+
+# Function to create a Selenium Webdriver using the chromedriver
+# chromedriver link: http://chromedriver.chromium.org/
+
 def create_driver():
 
     display = Display(visible=False, backend="xvfb")
@@ -36,7 +48,10 @@ indices = ['Consumo', 'Energia', 'Materiais basicos', 'Industrial',
 url = 'https://br.investing.com/equities/brazil'
 driver.get(url)
 
-with open('/home/maru/trading/main/data/indices.csv', 'w') as f:
+# File path to store the data we got from the source
+record_file_path = 'YOUR CHOICE'
+
+with open(record_file_path, 'w') as f:
     to_file = 'setor,nome,variacao,volume\n'
     f.write(to_file)
     for c, xpath in enumerate(xpaths):
@@ -66,12 +81,11 @@ with open('/home/maru/trading/main/data/indices.csv', 'w') as f:
             volume = str(volume)
 
             line = indices[c] + ',' + nome + ',' + variacao + ',' + volume + '\n'
-            # print(line)
             f.write(line)
 
 driver.close()
 
-df = pd.read_csv('/home/maru/trading/main/data/indices.csv')
+df = pd.read_csv(record_file_path)
 
 fig = px.treemap(df, path=['setor', 'nome'],
                  values='volume',
